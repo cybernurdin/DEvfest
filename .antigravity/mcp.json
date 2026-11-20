@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "devfest-angular": {
+      "command": "C:\\Program Files\\nodejs\\npx.cmd",
+      "args": ["--yes", "--package=node@24.15.0", "--package=@angular/cli@22.3.0", "ng", "mcp"],
+      "env": { "NG_CLI_ANALYTICS": "false" }
+    },
+    "devfest-browser": {
+      "command": "C:\\Program Files\\nodejs\\npx.cmd",
+      "args": ["--yes", "@playwright/mcp@0.0.86", "--isolated", "--headless"]
+    }
+  }
+}

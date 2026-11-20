@@ -1,0 +1,8 @@
+{
+  "terminal.integrated.env.windows": {
+    "CLOUDSDK_ACTIVE_CONFIG_NAME": "devfest",
+    "GOOGLE_CLOUD_PROJECT": "devfest-cybernurdin5-20261120",
+    "GOOGLE_CLOUD_QUOTA_PROJECT": "devfest-cybernurdin5-20261120",
+    "GOOGLE_CLOUD_LOCATION": "global"
+  }
+}
