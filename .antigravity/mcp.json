@@ -8,6 +8,13 @@
     "devfest-browser": {
       "command": "C:\\Program Files\\nodejs\\npx.cmd",
       "args": ["--yes", "@playwright/mcp@0.0.86", "--isolated", "--headless"]
+    },
+    "stitch": {
+      "command": "C:\\Program Files\\nodejs\\npx.cmd",
+      "args": ["--yes", "stitch-mcp"],
+      "env": {
+        "GOOGLE_CLOUD_PROJECT": "devfest-cybernurdin5-20261120"
+      }
     }
   }
 }
