@@ -21,6 +21,7 @@ export class AlertsComponent {
   selectedMapAreaId = signal<string | null>(null);
   selectedMapIncident = signal<Incident | null>(null);
   shareToast = signal<string | null>(null);
+  mapProvider = signal<'svg' | 'google'>('svg');
 
   readonly categories: { id: IncidentCategory | 'all'; labelKey: string }[] = [
     { id: 'all', labelKey: 'category.all' },
@@ -38,6 +39,18 @@ export class AlertsComponent {
     { id: 'information', labelKey: 'severity.information' }
   ];
 
+  readonly activeAlertCount = computed(() =>
+    this.incidentService.incidents().filter(i => i.verificationStatus !== 'retracted').length
+  );
+
+  readonly urgentCount = computed(() =>
+    this.incidentService.incidents().filter(i => i.severity === 'urgent').length
+  );
+
+  readonly cautionCount = computed(() =>
+    this.incidentService.incidents().filter(i => i.severity === 'caution').length
+  );
+
   setCategory(cat: IncidentCategory | 'all'): void {
     this.incidentService.activeCategory.set(cat);
   }
@@ -50,6 +63,10 @@ export class AlertsComponent {
     this.viewMode.set(mode);
   }
 
+  toggleMapProvider(provider: 'svg' | 'google'): void {
+    this.mapProvider.set(provider);
+  }
+
   selectAreaOnMap(areaId: string): void {
     this.selectedMapAreaId.set(areaId);
     const incidentInArea = this.incidentService
@@ -59,10 +76,11 @@ export class AlertsComponent {
   }
 
   shareIncident(inc: Incident): void {
+    if (typeof window === 'undefined') return;
     const url = `${window.location.origin}/alerts/${inc.id}`;
     if (navigator.clipboard) {
       navigator.clipboard.writeText(`[SafeCity Alert] ${inc.headline} - ${inc.areaName}: ${url}`);
-      this.shareToast.set(this.i18n.currentLang() === 'en' ? 'Alert link copied to clipboard' : 'Lien copié dans le presse-papier');
+      this.shareToast.set(this.i18n.currentLang() === 'en' ? 'Alert notice link copied' : 'Lien copié dans le presse-papier');
       setTimeout(() => this.shareToast.set(null), 3000);
     }
   }
@@ -90,6 +108,23 @@ export class AlertsComponent {
         return 'status-retracted';
       default:
         return 'status-reviewing';
+    }
+  }
+
+  formatTime(isoDate: string): string {
+    try {
+      const diffMs = Date.now() - new Date(isoDate).getTime();
+      const diffMins = Math.floor(diffMs / 60000);
+      if (diffMins < 60) {
+        return diffMins <= 1 ? 'Just now' : `${diffMins}m ago`;
+      }
+      const diffHours = Math.floor(diffMins / 60);
+      if (diffHours < 24) {
+        return `${diffHours}h ago`;
+      }
+      return `${Math.floor(diffHours / 24)}d ago`;
+    } catch {
+      return 'Recently';
     }
   }
 }

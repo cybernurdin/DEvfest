@@ -83,6 +83,18 @@ export class ReportWizardComponent {
     this.evidenceUploaded.set(true);
   }
 
+  handlePhotoUpload(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      this.evidenceUploaded.set(true);
+    }
+  }
+
+  getAreaName(): string {
+    const area = this.incidentService.coarseAreas.find(a => a.id === this.areaId());
+    return area ? area.name : this.areaId();
+  }
+
   submitReport(): void {
     if (this.isSubmitting() || !this.description().trim()) return;
 

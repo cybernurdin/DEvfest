@@ -1,12 +1,16 @@
 <div class="report-wizard-page">
   <div class="wizard-container">
     <div class="wizard-header">
+      <div class="header-badge">
+        <span class="secure-dot"></span>
+        <span>Cameroon Law No. 2024/017 Anonymous Protection</span>
+      </div>
       <h1 class="page-title">{{ i18n.t('nav.report') }}</h1>
       <p class="page-subtitle">
-        Help keep fellow Bamenda residents informed. Reports undergo verified moderation prior to public advisory release.
+        Submit factual civilian observations for human verification and community safety alerts.
       </p>
 
-      <!-- Progress Indicator -->
+      <!-- Progress Track -->
       @if (currentStep() <= 5) {
         <div class="progress-bar-track">
           <div class="progress-bar-fill" [style.width.%]="(currentStep() / 5) * 100"></div>
@@ -21,12 +25,21 @@
     @if (currentStep() === 1) {
       <div class="step-card">
         <div class="danger-check-banner">
-          <span class="danger-icon">🚨</span>
+          <div class="banner-icon-box" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <circle cx="12" cy="12" r="10"/>
+              <line x1="12" y1="8" x2="12" y2="12"/>
+              <line x1="12" y1="16" x2="12.01" y2="16"/>
+            </svg>
+          </div>
           <div class="danger-text">
-            <strong>Immediate Danger Check:</strong>
+            <strong>Immediate Danger Pre-Screening</strong>
             <p>{{ i18n.t('report.emergency_warning') }}</p>
             <a routerLink="/emergency-help" class="btn-call-emergency-inline">
-              📞 Direct Emergency Numbers (Police 117 / Fire 118 / SAMU 119)
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="call-icon">
+                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+              </svg>
+              <span>Emergency Hotlines: Police 117 · Fire 118 · SAMU 119 · Gendarmerie 113</span>
             </a>
           </div>
         </div>
@@ -42,7 +55,6 @@
                 [checked]="category() === cat.id"
                 (change)="category.set(cat.id)"
               />
-              <span class="cat-icon">{{ cat.icon }}</span>
               <div class="cat-info">
                 <span class="cat-name">{{ i18n.t(cat.labelKey) }}</span>
                 <span class="cat-desc">{{ cat.desc }}</span>
@@ -66,12 +78,12 @@
         <p class="step-desc">{{ i18n.t('report.area_hint') }}</p>
 
         <div class="form-group">
-          <label for="citySelect" class="form-label">City / Jurisdiction</label>
-          <input id="citySelect" type="text" value="Bamenda, Mezam Division, Cameroon" disabled class="form-input disabled" />
+          <label for="citySelect" class="form-label">City / Administrative Division</label>
+          <input id="citySelect" type="text" value="Bamenda, Mezam Division, Northwest Cameroon" disabled class="form-input disabled" />
         </div>
 
         <div class="form-group">
-          <label for="areaSelect" class="form-label">Approximate Neighborhood / Sector *</label>
+          <label for="areaSelect" class="form-label">Approximate Sector / Quarter *</label>
           <select id="areaSelect" class="form-select" [ngModel]="areaId()" (ngModelChange)="areaId.set($event)">
             @for (area of incidentService.coarseAreas; track area.id) {
               <option [value]="area.id">{{ area.name }}</option>
@@ -80,21 +92,21 @@
         </div>
 
         <div class="form-group">
-          <label for="landmarkInput" class="form-label">Road, Junction or Nearby Public Landmark</label>
+          <label for="landmarkInput" class="form-label">Road, Public Junction or Landmark</label>
           <input
             id="landmarkInput"
             type="text"
-            placeholder="e.g. Near Total Filling Station, 50m from Post Office roundabout"
+            placeholder="e.g. Near Commercial Bank junction, 50m from market roundabout"
             class="form-input"
             [ngModel]="roadOrLandmark()"
             (ngModelChange)="roadOrLandmark.set($event)"
           />
-          <span class="input-hint">Do NOT provide private residential house numbers or names of residents.</span>
+          <span class="input-hint">Do NOT provide private residential house numbers, personal names, or exact doorsteps.</span>
         </div>
 
         <div class="step-actions-split">
           <button type="button" class="btn-secondary" (click)="prevStep()">← Back</button>
-          <button type="button" class="btn-primary" (click)="nextStep()">Continue to Details →</button>
+          <button type="button" class="btn-primary" (click)="nextStep()">Continue to Observations →</button>
         </div>
       </div>
     }
@@ -102,38 +114,32 @@
     <!-- STEP 3: Factual Observations -->
     @if (currentStep() === 3) {
       <div class="step-card">
-        <h2 class="step-title">{{ i18n.t('report.step3_title') }}</h2>
-        <p class="step-desc">{{ i18n.t('report.desc_hint') }}</p>
+        <h2 class="step-title">Factual Observations Only</h2>
+        <p class="step-desc">
+          Describe concrete physical occurrences. Avoid rumors, speculative blame, or unverified claims.
+        </p>
 
         <div class="form-group">
-          <label for="descInput" class="form-label">Factual Description of the Hazard *</label>
+          <label for="descInput" class="form-label">What did you physically observe? *</label>
           <textarea
             id="descInput"
             rows="5"
-            placeholder="What exactly is occurring? (e.g. Fallen utility pole obstructing traffic, heavy black smoke coming from compound, flooded road impassable for small cars)..."
+            placeholder="Describe what occurred (e.g. fallen tree blocking right lane, power cable down across culvert)..."
             class="form-textarea"
             [ngModel]="description()"
             (ngModelChange)="description.set($event)"
-            required
           ></textarea>
         </div>
 
-        <div class="form-group checkbox-group">
+        <div class="checkbox-group">
           <label class="checkbox-label">
             <input
               type="checkbox"
               [checked]="isStillOngoing()"
               (change)="isStillOngoing.set(!isStillOngoing())"
             />
-            <span>This situation is actively ongoing at this moment</span>
+            <span>This hazard is still active / unresolved as of right now</span>
           </label>
-        </div>
-
-        <div class="safety-reminder-box">
-          <span class="icon">🛑</span>
-          <p>
-            <strong>Safety Warning:</strong> Do not put yourself in danger to collect information. Never approach fire, collapsed buildings, damaged high-voltage lines, or active unrest.
-          </p>
         </div>
 
         <div class="step-actions-split">
@@ -143,154 +149,159 @@
             class="btn-primary"
             [disabled]="!description().trim()"
             (click)="nextStep()">
-            Continue to Evidence →
+            Continue to Verification →
           </button>
         </div>
       </div>
     }
 
-    <!-- STEP 4: Evidence & Source Type -->
+    <!-- STEP 4: Source Qualification & Photo Upload -->
     @if (currentStep() === 4) {
       <div class="step-card">
-        <h2 class="step-title">{{ i18n.t('report.step4_title') }}</h2>
+        <h2 class="step-title">Source Qualification & Privacy Redaction</h2>
+        <p class="step-desc">
+          Classify your reporting source and upload photographic confirmation if available.
+        </p>
 
-        <div class="form-group">
-          <span class="form-label">How did you learn about this incident? *</span>
-          <div class="radio-stack">
-            <label class="radio-option">
-              <input
-                type="radio"
-                name="sourceType"
-                value="firsthand"
-                [checked]="sourceType() === 'firsthand'"
-                (change)="sourceType.set('firsthand')"
-              />
-              <span class="radio-text">
-                <strong>{{ i18n.t('report.firsthand') }}</strong>
-                <small>I am currently at or near the location and personally saw it</small>
-              </span>
-            </label>
-            <label class="radio-option">
-              <input
-                type="radio"
-                name="sourceType"
-                value="secondhand"
-                [checked]="sourceType() === 'secondhand'"
-                (change)="sourceType.set('secondhand')"
-              />
-              <span class="radio-text">
-                <strong>{{ i18n.t('report.secondhand') }}</strong>
-                <small>A family member, driver, or neighborhood group informed me</small>
-              </span>
-            </label>
-          </div>
+        <div class="source-type-selector">
+          <label class="source-card" [class.selected]="sourceType() === 'firsthand'">
+            <input
+              type="radio"
+              name="sourceType"
+              value="firsthand"
+              [checked]="sourceType() === 'firsthand'"
+              (change)="sourceType.set('firsthand')"
+            />
+            <div class="source-info">
+              <strong>Firsthand Eyewitness</strong>
+              <p>I physically saw or directly encountered this hazard myself.</p>
+            </div>
+          </label>
+
+          <label class="source-card" [class.selected]="sourceType() === 'secondhand'">
+            <input
+              type="radio"
+              name="sourceType"
+              value="secondhand"
+              [checked]="sourceType() === 'secondhand'"
+              (change)="sourceType.set('secondhand')"
+            />
+            <div class="source-info">
+              <strong>Relayed Community Report</strong>
+              <p>A relative, neighborhood driver, or commercial colleague informed me.</p>
+            </div>
+          </label>
         </div>
 
-        <!-- Evidence Attachment -->
-        <div class="form-group">
-          <span class="form-label">Optional Photo Evidence (Max 3)</span>
-          <div class="upload-dropzone" (click)="simulateUpload()">
-            <span class="upload-icon">📷</span>
-            <p>Tap to attach photo from camera or gallery</p>
-            <span class="metadata-protection-pill">
-              🔒 {{ i18n.t('report.metadata_notice') }}
-            </span>
-          </div>
-          @if (evidenceUploaded()) {
-            <div class="upload-success-chip">
-              ✓ 1 Photo attached (EXIF GPS & camera metadata stripped)
+        <!-- Metadata Stripping Upload Area -->
+        <div class="upload-section">
+          <div class="upload-dropzone" (click)="fileInput.click()">
+            <input #fileInput type="file" accept="image/*" class="sr-only" (change)="handlePhotoUpload($event)" />
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="upload-icon">
+              <rect width="18" height="18" x="3" y="3" rx="2" ry="2"/>
+              <circle cx="9" cy="9" r="2"/>
+              <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/>
+            </svg>
+            <div class="upload-text">
+              @if (evidenceUploaded()) {
+                <strong class="upload-success">Photo attached and EXIF metadata purged</strong>
+                <span>Click to select another photo</span>
+              } @else {
+                <strong>Optional: Attach verification photo</strong>
+                <span>EXIF GPS coordinates and camera metadata stripped automatically</span>
+              }
             </div>
-          }
+          </div>
         </div>
 
         <div class="step-actions-split">
           <button type="button" class="btn-secondary" (click)="prevStep()">← Back</button>
-          <button type="button" class="btn-primary" (click)="nextStep()">Review & Submit →</button>
+          <button type="button" class="btn-primary" (click)="nextStep()">Review Submission →</button>
         </div>
       </div>
     }
 
-    <!-- STEP 5: Final Review & Submission -->
+    <!-- STEP 5: Review & Anonymous Submit -->
     @if (currentStep() === 5) {
       <div class="step-card">
-        <h2 class="step-title">Review & Submit Incident Report</h2>
+        <h2 class="step-title">Review & Anonymous Submission</h2>
         <p class="step-desc">
-          Please confirm your submission details. Submitting this form sends an encrypted record to the duty moderation queue.
+          Review your observation before submitting to the SafeCity volunteer moderation queue.
         </p>
 
-        <div class="review-summary-card">
+        <div class="summary-review-box">
           <div class="review-row">
             <span class="review-label">Category:</span>
-            <strong class="review-value">{{ i18n.t('category.' + category()) }}</strong>
+            <span class="review-value">{{ i18n.t('category.' + category()) }}</span>
           </div>
           <div class="review-row">
-            <span class="review-label">Area:</span>
-            <strong class="review-value">{{ areaId() }} (Bamenda)</strong>
+            <span class="review-label">Quarter:</span>
+            <span class="review-value">{{ getAreaName() }}</span>
           </div>
           @if (roadOrLandmark()) {
             <div class="review-row">
-              <span class="review-label">Landmark:</span>
+              <span class="review-label">Public Landmark:</span>
               <span class="review-value">{{ roadOrLandmark() }}</span>
             </div>
           }
           <div class="review-row">
+            <span class="review-label">Source Type:</span>
+            <span class="review-value">{{ sourceType() === 'firsthand' ? 'Firsthand Eyewitness' : 'Relayed Community Report' }}</span>
+          </div>
+          <div class="review-row">
             <span class="review-label">Observation:</span>
             <span class="review-value">{{ description() }}</span>
           </div>
-          <div class="review-row">
-            <span class="review-label">Source Type:</span>
-            <span class="review-value">{{ sourceType() === 'firsthand' ? 'Firsthand Observation' : 'Secondhand Information' }}</span>
-          </div>
         </div>
 
-        <div class="privacy-consent-box">
-          <span class="icon">🛡️</span>
+        <div class="privacy-guarantee-note">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="shield-svg">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          </svg>
           <p>
-            By submitting, you attest that the information is provided in good faith for public safety.
-            Your report is processed in accordance with SafeCity's non-affiliation civic guidelines and Cameroon Data Protection Law No. 2024/017.
+            <strong>Data Protection Guarantee:</strong> You are submitting anonymously. No phone number, IP address, or private coordinate data is saved. You will receive a tracking code to monitor publication status.
           </p>
         </div>
 
         <div class="step-actions-split">
-          <button type="button" class="btn-secondary" [disabled]="isSubmitting()" (click)="prevStep()">← Back</button>
-          <button
-            type="button"
-            class="btn-submit-final"
-            [disabled]="isSubmitting()"
-            (click)="submitReport()">
+          <button type="button" class="btn-secondary" (click)="prevStep()" [disabled]="isSubmitting()">← Back</button>
+          <button type="button" class="btn-primary-submit" (click)="submitReport()" [disabled]="isSubmitting()">
             @if (isSubmitting()) {
-              <span>Submitting Securely...</span>
+              <span>Submitting report...</span>
             } @else {
-              <span>{{ i18n.t('report.submit_btn') }} ✓</span>
+              <span>Submit Anonymous Notice</span>
             }
           </button>
         </div>
       </div>
     }
 
-    <!-- STEP 6: Submission Success -->
-    @if (currentStep() === 6) {
-      <div class="success-card">
-        <span class="success-crest">✓</span>
-        <h2 class="success-title">{{ i18n.t('report.tracking_title') }}</h2>
-        <p class="success-message">
-          Your report has been received and entered into the moderation queue. To protect everyone's safety, updates are corroborated prior to public release.
+    <!-- STEP 6: Confirmation Screen -->
+    @if (currentStep() === 6 && submittedTrackingCode()) {
+      <div class="step-card success-card">
+        <div class="success-badge-box">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" class="check-svg">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+        </div>
+        <h2 class="success-title">Report Received for Verification</h2>
+        <p class="success-lead">
+          Your observation has been queued for duty moderation in accordance with SafeCity civil verification standards.
         </p>
 
-        <div class="tracking-code-box">
-          <span class="code-label">Private Tracking Code:</span>
-          <div class="code-display">
-            <code class="code-text">{{ submittedTrackingCode() }}</code>
-            <button type="button" class="btn-copy-code" (click)="copyTrackingCode()">
-              📋 Copy Code
-            </button>
-          </div>
-          <p class="code-help">Keep this code to check verification progress anytime.</p>
+        <div class="tracking-code-card">
+          <span class="tracking-label">Your Private Anonymous Tracking Code:</span>
+          <div class="tracking-number">{{ submittedTrackingCode() }}</div>
+          <p class="tracking-hint">Save this code. You can use it anytime to query the lifecycle status of your report without creating an account.</p>
         </div>
 
         <div class="success-actions">
-          <a routerLink="/alerts" class="btn-primary">Return to Safety Alerts</a>
-          <a [routerLink]="['/report/status']" class="btn-secondary">Track Report Status</a>
+          <a [routerLink]="['/report/status', submittedTrackingCode()]" class="btn-track-now">
+            Track Verification Status →
+          </a>
+          <a routerLink="/alerts" class="btn-back-home">
+            Return to Live Safety Feed
+          </a>
         </div>
       </div>
     }

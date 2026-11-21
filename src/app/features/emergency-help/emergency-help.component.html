@@ -1,40 +1,68 @@
 <div class="emergency-help-page">
   <div class="help-container">
     <header class="help-header">
-      <span class="warning-crest">🚨</span>
-      <h1>Verified Emergency Contacts (Bamenda, Cameroon)</h1>
-      <p>
-        In an immediate life-safety emergency, contact statutory authorities directly.
-        This directory is verified locally for Mezam Division and works offline.
+      <div class="header-badge">
+        <span class="live-dot" aria-hidden="true"></span>
+        <span>Cameroon Verified Emergency Hotlines</span>
+      </div>
+      <h1>Statutory Emergency Contacts</h1>
+      <p class="header-lead">
+        In an immediate life-safety crisis or active crime in progress, contact statutory emergency authorities directly.
+        This directory is verified for Bamenda and the Mezam Division.
       </p>
     </header>
 
     <div class="critical-notice-banner" role="alert">
-      <strong>Essential Safety Distinction:</strong>
-      <p>
-        SafeCity is an independent civic information tool. Submitting a report on SafeCity does NOT summon rescue services, fire brigades, or police. Always place a direct telephone call to the numbers below.
-      </p>
+      <div class="banner-icon-col" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"/>
+          <line x1="12" y1="8" x2="12" y2="12"/>
+          <line x1="12" y1="16" x2="12.01" y2="16"/>
+        </svg>
+      </div>
+      <div class="banner-body">
+        <strong>Important Civic Distinction</strong>
+        <p>
+          SafeCity is an independent civilian awareness platform and <strong>does NOT</strong> dispatch rescue teams, ambulances, or police officers. Always place a direct voice call to the numbers below.
+        </p>
+      </div>
     </div>
 
+    <!-- Emergency Service Cards Grid -->
     <div class="contacts-grid">
       @for (c of incidentService.emergencyContacts; track c.id) {
-        <div class="contact-card">
-          <div class="card-top">
-            <span class="service-badge" [class]="'badge-' + c.serviceType">
+        <div class="contact-card" [class]="'service-' + c.serviceType">
+          <div class="card-header">
+            <span class="service-pill" [class]="'pill-' + c.serviceType">
               {{ c.serviceType | uppercase }}
             </span>
-            <span class="verified-pill">✓ Verified Local</span>
+            <span class="verified-tag">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="tag-icon">
+                <polyline points="20 6 9 17 4 12"/>
+              </svg>
+              Verified Local
+            </span>
           </div>
 
           <h2 class="contact-title">{{ c.title }}</h2>
-          <p class="coverage-area">📍 Coverage: {{ c.coverageArea }}</p>
+          <div class="coverage-row">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="coverage-icon">
+              <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/>
+              <circle cx="12" cy="10" r="3"/>
+            </svg>
+            <span>Coverage: {{ c.coverageArea }}</span>
+          </div>
+
           <p class="contact-notes">{{ c.notes }}</p>
 
           <div class="call-action-box">
             <a [href]="'tel:' + c.phoneNumber" class="btn-dial-now">
-              📞 Dial {{ c.phoneNumber }}
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="phone-svg">
+                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+              </svg>
+              <span>Call {{ c.phoneNumber }}</span>
             </a>
-            <span class="review-date">Last reviewed: {{ c.reviewDate }}</span>
+            <span class="review-date">Audit: {{ c.reviewDate }}</span>
           </div>
         </div>
       }
@@ -42,9 +70,20 @@
 
     <!-- Offline Resilience Box -->
     <div class="offline-guidance-card">
-      <h3>📶 Offline Safety Tip for Cameroon Mobile Users</h3>
+      <div class="offline-header">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="offline-svg">
+          <line x1="1" y1="1" x2="23" y2="23"/>
+          <path d="M16.72 11.06A10.94 10.94 0 0 1 19 12.55"/>
+          <path d="M5 12.55a10.94 10.94 0 0 1 5.17-2.39"/>
+          <path d="M10.71 5.05A16 16 0 0 1 22.56 9"/>
+          <path d="M1.42 9a15.91 15.91 0 0 1 4.7-2.88"/>
+          <path d="M8.53 16.11a6 6 0 0 1 6.95 0"/>
+          <line x1="12" y1="20" x2="12.01" y2="20"/>
+        </svg>
+        <h3>Offline Voice Redundancy Protocol (Cameroon)</h3>
+      </div>
       <p>
-        If mobile data (3G/4G) is interrupted in Bamenda, the emergency numbers above remain callable via standard GSM cellular voice across MTN, Orange, and Camtel networks. Save these numbers directly in your physical handset memory.
+        If mobile data connectivity (3G/4G/LTE) is interrupted in the Northwest Region, all statutory emergency numbers above (117, 118, 119, 113) remain fully operational over standard cellular 2G/GSM voice across MTN Cameroon, Orange Cameroun, and Camtel.
       </p>
     </div>
   </div>

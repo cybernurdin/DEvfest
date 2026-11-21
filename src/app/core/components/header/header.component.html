@@ -1,62 +1,82 @@
 <header class="site-header">
-  <!-- Top Civic Safety Banner -->
-  <div class="disclaimer-banner" role="alert">
-    <div class="banner-content">
-      <span class="warning-icon" aria-hidden="true">⚠️</span>
-      <p class="disclaimer-text">
-        <strong>{{ i18n.t('app.disclaimer') }}</strong>
-      </p>
-      <a routerLink="/emergency-help" class="quick-emergency-btn">
-        📞 {{ i18n.t('action.emergency_help') }}
+  <!-- Top Civic Emergency Status Bar -->
+  <div class="emergency-bar" role="complementary" aria-label="Official Cameroon Emergency Telephone Hotlines">
+    <div class="emergency-bar-inner">
+      <div class="emergency-info">
+        <span class="emergency-pulse" aria-hidden="true"></span>
+        <span class="emergency-notice">
+          <strong>Official Emergency Toll-Free Lines:</strong>
+          Police <strong>117</strong> · Fire <strong>118</strong> · SAMU Ambulance <strong>119</strong> · Gendarmerie <strong>113</strong>
+        </span>
+      </div>
+      <a routerLink="/emergency-help" class="emergency-action-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="action-icon">
+          <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+        </svg>
+        <span>{{ i18n.t('action.emergency_help') }}</span>
       </a>
     </div>
   </div>
 
-  <!-- Main Navbar -->
-  <div class="navbar-wrapper">
-    <div class="navbar-container">
-      <a routerLink="/" class="brand-block">
+  <!-- Primary Navigation Bar -->
+  <nav class="navbar" aria-label="Main Navigation">
+    <div class="navbar-inner">
+      <!-- Brand Crest & Title -->
+      <a routerLink="/" class="brand">
         <div class="brand-crest" aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-            <path d="M12 8v4M12 16h.01"/>
+            <path d="m9 12 2 2 4-4"/>
           </svg>
         </div>
         <div class="brand-text">
-          <span class="brand-title">SafeCity</span>
-          <span class="brand-subtitle">Bamenda Safety Alerts</span>
+          <span class="brand-name">SafeCity</span>
+          <span class="brand-region">Bamenda · Crisis Desk</span>
         </div>
       </a>
 
-      <!-- Primary Desktop Navigation -->
-      <nav class="desktop-nav" aria-label="Main Navigation">
-        <a routerLink="/alerts" routerLinkActive="active" class="nav-link">
+      <!-- Navigation Links -->
+      <div class="nav-links">
+        <a routerLink="/alerts" routerLinkActive="active" class="nav-item">
           {{ i18n.t('nav.alerts') }}
         </a>
-        <a routerLink="/map" routerLinkActive="active" class="nav-link">
+        <a routerLink="/map" routerLinkActive="active" class="nav-item">
           {{ i18n.t('nav.map') }}
         </a>
-        <a routerLink="/report" routerLinkActive="active" class="nav-link report-cta">
-          ✏️ {{ i18n.t('nav.report') }}
+        <a routerLink="/my-alerts" routerLinkActive="active" class="nav-item">
+          {{ i18n.t('nav.my_alerts') }}
         </a>
-        <a routerLink="/my-alerts" routerLinkActive="active" class="nav-link">
-          🔔 {{ i18n.t('nav.my_alerts') }}
+        <a routerLink="/about" routerLinkActive="active" class="nav-item">
+          {{ i18n.t('nav.about') }}
         </a>
-        <a routerLink="/admin" routerLinkActive="active" class="nav-link staff-link">
-          🛡️ {{ i18n.t('nav.admin') }}
+        <a routerLink="/admin" routerLinkActive="active" class="nav-item nav-item-admin">
+          Staff Ops
         </a>
-      </nav>
+      </div>
 
-      <!-- Language Switcher & Controls -->
-      <div class="header-actions">
+      <!-- Header Actions: Language & Report Incident CTA -->
+      <div class="nav-actions">
         <button
           type="button"
-          class="lang-toggle-btn"
+          class="lang-pill"
           (click)="i18n.toggleLanguage()"
-          [attr.aria-label]="'Switch to ' + (i18n.currentLang() === 'en' ? 'French' : 'English')">
-          🌐 {{ i18n.currentLang() === 'en' ? 'FR' : 'EN' }}
+          [attr.aria-label]="'Switch language to ' + (i18n.currentLang() === 'en' ? 'French' : 'English')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="lang-icon">
+            <circle cx="12" cy="12" r="10"/>
+            <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/>
+            <path d="M2 12h20"/>
+          </svg>
+          <span>{{ i18n.currentLang() === 'en' ? 'FR' : 'EN' }}</span>
         </button>
+
+        <a routerLink="/report" class="btn-primary-report">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="btn-icon">
+            <line x1="12" y1="5" x2="12" y2="19"/>
+            <line x1="5" y1="12" x2="19" y2="12"/>
+          </svg>
+          <span>{{ i18n.t('action.report_now') }}</span>
+        </a>
       </div>
     </div>
-  </div>
+  </nav>
 </header>

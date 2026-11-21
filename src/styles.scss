@@ -1,35 +1,123 @@
-/* SafeCity Civic Design System Tokens */
+/* ==========================================================================
+   SafeCity Civic Design System — Modern Crisis Awareness Platform
+   ========================================================================== */
+
 :root {
-  --color-primary: #0284c7;
-  --color-primary-dark: #0369a1;
-  --color-danger: #dc2626;
-  --color-danger-dark: #b91c1c;
-  --color-warning: #d97706;
-  --color-success: #10b981;
+  /* Typography */
+  --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', 'SF Mono', Consolas, monospace;
+
+  /* Surfaces & Canvas */
+  --color-canvas: #f8fafc;
   --color-surface: #ffffff;
-  --color-background: #f8fafc;
-  --color-text-main: #0f172a;
+  --color-surface-hover: #f1f5f9;
+  --color-surface-sunken: #f1f5f9;
+  --color-surface-border: #e2e8f0;
+  --color-surface-border-subtle: #edf2f7;
+
+  /* Authority Dark Palette */
+  --color-dark-obsidian: #080d1a;
+  --color-dark-surface: #0f172a;
+  --color-dark-card: #1e293b;
+  --color-dark-border: #334155;
+  --color-dark-border-subtle: #1e293b;
+
+  /* Text Hierarchy */
+  --color-text-strong: #090d16;
+  --color-text-body: #334155;
   --color-text-muted: #64748b;
-  --color-border: #e2e8f0;
-  --font-family-sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --color-text-subtle: #94a3b8;
+  --color-text-inverse: #f8fafc;
+  --color-text-inverse-muted: #94a3b8;
+
+  /* Primary Brand (Refined Deep Cobalt) */
+  --color-primary: #1d4ed8;
+  --color-primary-hover: #1e40af;
+  --color-primary-light: #eff6ff;
+  --color-primary-border: #bfdbfe;
+
+  /* Crisis Severity Tokens */
+  --color-urgent: #e11d48;
+  --color-urgent-bg: #fff1f2;
+  --color-urgent-border: #fecdd3;
+  --color-urgent-text: #9f1239;
+
+  --color-caution: #d97706;
+  --color-caution-bg: #fffbeb;
+  --color-caution-border: #fde68a;
+  --color-caution-text: #92400e;
+
+  --color-info: #0284c7;
+  --color-info-bg: #f0f9ff;
+  --color-info-border: #bae6fd;
+  --color-info-text: #075985;
+
+  --color-safe: #059669;
+  --color-safe-bg: #ecfdf5;
+  --color-safe-border: #a7f3d0;
+  --color-safe-text: #065f46;
+
+  /* Radii */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 18px;
+  --radius-pill: 9999px;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px 0 rgba(15, 23, 42, 0.05);
+  --shadow-card: 0 1px 3px 0 rgba(15, 23, 42, 0.06), 0 1px 2px -1px rgba(15, 23, 42, 0.06);
+  --shadow-card-hover: 0 10px 25px -5px rgba(15, 23, 42, 0.08), 0 8px 10px -6px rgba(15, 23, 42, 0.04);
+  --shadow-floating: 0 20px 25px -5px rgba(15, 23, 42, 0.1), 0 10px 10px -5px rgba(15, 23, 42, 0.04);
+
+  /* Transitions */
+  --transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-normal: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 *, *::before, *::after {
   box-sizing: border-box;
 }
 
-body {
+html, body {
   margin: 0;
   padding: 0;
-  font-family: var(--font-family-sans);
-  background-color: var(--color-background);
-  color: var(--color-text-main);
-  line-height: 1.5;
+  font-family: var(--font-sans);
+  background-color: var(--color-canvas);
+  color: var(--color-text-body);
+  line-height: 1.6;
+  font-size: 15px;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: var(--color-text-strong);
+  font-family: var(--font-sans);
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+  margin-top: 0;
+}
+
+p {
+  margin-top: 0;
+  margin-bottom: 1rem;
+}
+
+a {
+  color: var(--color-primary);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+
+  &:hover {
+    color: var(--color-primary-hover);
+  }
 }
 
 button, input, select, textarea {
   font-family: inherit;
+  font-size: inherit;
 }
 
 /* Accessible focus ring */
@@ -46,4 +134,23 @@ button, input, select, textarea {
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+}
+
+/* Shared utility classes */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
 }
