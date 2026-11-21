@@ -1,0 +1,154 @@
+<div class="my-alerts-page">
+  @if (savedToast()) {
+    <div class="toast-notification" role="status">
+      {{ savedToast() }}
+    </div>
+  }
+
+  @if (simulatedPush()) {
+    <div class="push-simulation-card" role="alert">
+      <div class="push-header">
+        <span class="app-icon">🛡️</span>
+        <span class="app-name">SafeCity Bamenda • Push Simulation</span>
+        <span class="push-time">Now</span>
+      </div>
+      <p class="push-body">{{ simulatedPush() }}</p>
+    </div>
+  }
+
+  <div class="alerts-container">
+    <header class="page-header">
+      <h1>{{ i18n.t('nav.my_alerts') }}</h1>
+      <p>Configure which Bamenda neighborhood sectors and incident categories notify you.</p>
+    </header>
+
+    <div class="settings-card">
+      <!-- Section 1: Activation -->
+      <div class="toggle-row-primary">
+        <div>
+          <h3>Push Notifications</h3>
+          <p>Receive notifications when corroborated notices are published in your followed areas.</p>
+        </div>
+        <label class="switch">
+          <input
+            type="checkbox"
+            [checked]="notificationsActive()"
+            (change)="notificationsActive.set(!notificationsActive())"
+          />
+          <span class="slider"></span>
+        </label>
+      </div>
+
+      <!-- Section 2: Followed Areas -->
+      <section class="config-section">
+        <h3>1. Followed Neighborhood Sectors</h3>
+        <p class="section-hint">Select the sectors where you live, commute, or work in Bamenda:</p>
+        <div class="areas-grid">
+          @for (area of incidentService.coarseAreas; track area.id) {
+            <button
+              type="button"
+              class="area-select-chip"
+              [class.selected]="followedAreas().includes(area.id)"
+              (click)="toggleArea(area.id)">
+              <span class="check-icon">{{ followedAreas().includes(area.id) ? '✓' : '+' }}</span>
+              <span>{{ area.name }}</span>
+            </button>
+          }
+        </div>
+      </section>
+
+      <!-- Section 3: Incident Categories -->
+      <section class="config-section">
+        <h3>2. Alert Categories</h3>
+        <p class="section-hint">Choose which types of community safety hazards to receive:</p>
+        <div class="categories-list">
+          <label class="cat-checkbox-row">
+            <input
+              type="checkbox"
+              [checked]="followedCategories().includes('public-safety')"
+              (change)="toggleCategory('public-safety')"
+            />
+            <div>
+              <strong>{{ i18n.t('category.public-safety') }}</strong>
+              <small>Fires, building collapses, major smoke hazards</small>
+            </div>
+          </label>
+
+          <label class="cat-checkbox-row">
+            <input
+              type="checkbox"
+              [checked]="followedCategories().includes('mobility')"
+              (change)="toggleCategory('mobility')"
+            />
+            <div>
+              <strong>{{ i18n.t('category.mobility') }}</strong>
+              <small>Fallen trees, severe road washouts, major traffic blockages</small>
+            </div>
+          </label>
+
+          <label class="cat-checkbox-row">
+            <input
+              type="checkbox"
+              [checked]="followedCategories().includes('health-utility')"
+              (change)="toggleCategory('health-utility')"
+            />
+            <div>
+              <strong>{{ i18n.t('category.health-utility') }}</strong>
+              <small>Downed electrical cables, broken water conduits, severe utility hazards</small>
+            </div>
+          </label>
+
+          <label class="cat-checkbox-row">
+            <input
+              type="checkbox"
+              [checked]="followedCategories().includes('weather')"
+              (change)="toggleCategory('weather')"
+            />
+            <div>
+              <strong>{{ i18n.t('category.weather') }}</strong>
+              <small>Flash floods, severe thunderstorms, extreme weather</small>
+            </div>
+          </label>
+        </div>
+      </section>
+
+      <!-- Section 4: Severity & Quiet Hours -->
+      <section class="config-section">
+        <h3>3. Severity Threshold & Quiet Hours</h3>
+        <div class="form-row">
+          <label for="severitySelect">Minimum Severity for Push:</label>
+          <select
+            id="severitySelect"
+            class="form-select"
+            [ngModel]="minSeverity()"
+            (ngModelChange)="minSeverity.set($event)">
+            <option value="information">All Notices (Informational, Caution & Urgent)</option>
+            <option value="caution">Caution & Urgent Notices Only</option>
+            <option value="urgent">Urgent Emergencies Only</option>
+          </select>
+        </div>
+
+        <div class="quiet-hours-toggle">
+          <label class="checkbox-row">
+            <input
+              type="checkbox"
+              [checked]="quietHours()"
+              (change)="quietHours.set(!quietHours())"
+            />
+            <span>Quiet Hours (22:00 - 06:00): Silence non-urgent alerts overnight</span>
+          </label>
+        </div>
+      </section>
+
+      <!-- Action Buttons -->
+      <div class="card-actions">
+        <button type="button" class="btn-save" (click)="savePreferences()">
+          💾 {{ i18n.t('action.subscribe') }}
+        </button>
+        <button type="button" class="btn-test" (click)="testNotification()">
+          🔔 {{ i18n.t('action.test_notification') }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

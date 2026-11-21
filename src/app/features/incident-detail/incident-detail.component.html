@@ -1,0 +1,178 @@
+<div class="incident-detail-page">
+  @if (toastMessage()) {
+    <div class="toast-notification" role="status">
+      {{ toastMessage() }}
+    </div>
+  }
+
+  @if (incident()) {
+    <div class="detail-container">
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a routerLink="/alerts">← {{ i18n.t('action.back_to_alerts') }}</a>
+        <span class="separator">/</span>
+        <span class="current">{{ incident()!.id }}</span>
+      </nav>
+
+      <!-- Main Incident Article -->
+      <article class="detail-card">
+        <header class="detail-header">
+          <div class="badge-row">
+            <span class="badge-severity" [class]="'severity-' + incident()!.severity">
+              {{ incident()!.severity | uppercase }}
+            </span>
+            <span class="badge-verification" [class]="'status-' + incident()!.verificationStatus">
+              {{ i18n.t('status.' + incident()!.verificationStatus) }}
+            </span>
+            <span class="badge-lifecycle">
+              LIFECYCLE: {{ incident()!.lifecycle | uppercase }}
+            </span>
+            <span class="badge-revision">
+              REV #{{ incident()!.revision }}
+            </span>
+          </div>
+
+          <h1 class="headline">{{ incident()!.headline }}</h1>
+
+          <div class="meta-strip">
+            <div class="meta-item">
+              <span class="meta-label">📍 {{ i18n.t('detail.area') }}</span>
+              <strong class="meta-val">{{ incident()!.areaName }}</strong>
+            </div>
+            <div class="meta-item">
+              <span class="meta-label">🕒 {{ i18n.t('detail.observed') }}</span>
+              <span class="meta-val">{{ incident()!.observedAt | date:'medium' }}</span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-label">✅ {{ i18n.t('detail.last_updated') }}</span>
+              <span class="meta-val">{{ incident()!.updatedAt | date:'medium' }}</span>
+            </div>
+          </div>
+        </header>
+
+        <!-- Privacy & Generalization Notice -->
+        <div class="privacy-callout">
+          <span class="privacy-icon">🛡️</span>
+          <p>
+            <strong>Civilian Protection Policy:</strong> Coarse neighborhood zone display only. In accordance with safety principles, precise witness coordinates, vehicle license plates, and individuals are never published.
+          </p>
+        </div>
+
+        @if (incident()!.correctionNote) {
+          <div class="retraction-banner" role="alert">
+            <strong>CORRECTION / RETRACTION NOTICE:</strong>
+            <p>{{ incident()!.correctionNote }}</p>
+          </div>
+        }
+
+        <!-- Section 1: Summary -->
+        <section class="section-block">
+          <h2>Situation Summary</h2>
+          <p class="summary-text">{{ incident()!.safeSummary }}</p>
+        </section>
+
+        <!-- Section 2: Safety Advice -->
+        <section class="section-block advice-highlight">
+          <div class="advice-header">
+            <span class="icon">⚠️</span>
+            <h2>{{ i18n.t('detail.safety_advice') }}</h2>
+          </div>
+          <p class="advice-content">{{ incident()!.safetyAdvice }}</p>
+        </section>
+
+        <!-- Section 3: Known vs Uncertainties -->
+        <div class="verification-grid">
+          <div class="known-card">
+            <h3>✓ {{ i18n.t('detail.known_facts') }}</h3>
+            <ul>
+              @for (fact of incident()!.knownFacts; track fact) {
+                <li>{{ fact }}</li>
+              }
+            </ul>
+          </div>
+
+          <div class="uncertainties-card">
+            <h3>? {{ i18n.t('detail.uncertainties') }}</h3>
+            <ul>
+              @for (item of incident()!.uncertainties; track item) {
+                <li>{{ item }}</li>
+              }
+            </ul>
+          </div>
+        </div>
+
+        <!-- Section 4: Source Attribution & Provenance -->
+        <section class="section-block sources-block">
+          <h3>Verification Provenance & Linked Records</h3>
+          <p class="provenance-note">
+            Verified by: <strong>{{ incident()!.publishedByRole }}</strong>. This incident was corroborated against independent reporting criteria.
+          </p>
+          <ul class="sources-list">
+            @for (src of incident()!.sourceLinks; track src) {
+              <li>
+                <span class="source-link-icon">🔗</span>
+                <span class="source-text">{{ src }}</span>
+                <span class="badge-audited">AUDIT CHECKED</span>
+              </li>
+            }
+          </ul>
+        </section>
+
+        <!-- Footer Actions -->
+        <footer class="detail-actions">
+          <button type="button" class="btn-share-large" (click)="shareNotice()">
+            🔗 {{ i18n.t('action.share') }}
+          </button>
+          <button type="button" class="btn-flag-inaccuracy" (click)="showFlagDialog.set(true)">
+            🚩 {{ i18n.t('action.flag_inaccuracy') }}
+          </button>
+        </footer>
+      </article>
+    </div>
+  }
+
+  <!-- Flag Inaccuracy Modal -->
+  @if (showFlagDialog()) {
+    <div class="modal-backdrop" (click)="showFlagDialog.set(false)">
+      <div class="modal-content" (click)="$event.stopPropagation()" role="dialog" aria-labelledby="flagModalTitle">
+        <div class="modal-header">
+          <h3 id="flagModalTitle">Report an Inaccuracy in this Notice</h3>
+          <button type="button" class="close-modal-btn" (click)="showFlagDialog.set(false)">✕</button>
+        </div>
+
+        @if (flagSubmitted()) {
+          <div class="flag-success">
+            <span class="success-icon">✓</span>
+            <p>Thank you. Your correction report has been logged to the moderation triage queue for urgent re-verification.</p>
+          </div>
+        } @else {
+          <div class="modal-body">
+            <p class="modal-desc">
+              If you have firsthand knowledge that any detail in this safety notice is inaccurate, outdated, or resolved, please explain:
+            </p>
+            <textarea
+              [(ngModel)]="flagReason"
+              rows="4"
+              placeholder="Explain what is inaccurate or what has changed (e.g. road now passable, fire fully out)..."
+              class="flag-textarea"
+              aria-label="Correction details"
+            ></textarea>
+            <p class="modal-privacy-note">
+              Your feedback is queued privately for duty moderators and will not be published publicly.
+            </p>
+          </div>
+
+          <div class="modal-actions">
+            <button type="button" class="btn-cancel" (click)="showFlagDialog.set(false)">Cancel</button>
+            <button
+              type="button"
+              class="btn-submit-flag"
+              [disabled]="!flagReason().trim()"
+              (click)="submitFlag()">
+              Submit Correction Report
+            </button>
+          </div>
+        }
+      </div>
+    </div>
+  }
+</div>

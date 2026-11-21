@@ -1,0 +1,51 @@
+<div class="emergency-help-page">
+  <div class="help-container">
+    <header class="help-header">
+      <span class="warning-crest">🚨</span>
+      <h1>Verified Emergency Contacts (Bamenda, Cameroon)</h1>
+      <p>
+        In an immediate life-safety emergency, contact statutory authorities directly.
+        This directory is verified locally for Mezam Division and works offline.
+      </p>
+    </header>
+
+    <div class="critical-notice-banner" role="alert">
+      <strong>Essential Safety Distinction:</strong>
+      <p>
+        SafeCity is an independent civic information tool. Submitting a report on SafeCity does NOT summon rescue services, fire brigades, or police. Always place a direct telephone call to the numbers below.
+      </p>
+    </div>
+
+    <div class="contacts-grid">
+      @for (c of incidentService.emergencyContacts; track c.id) {
+        <div class="contact-card">
+          <div class="card-top">
+            <span class="service-badge" [class]="'badge-' + c.serviceType">
+              {{ c.serviceType | uppercase }}
+            </span>
+            <span class="verified-pill">✓ Verified Local</span>
+          </div>
+
+          <h2 class="contact-title">{{ c.title }}</h2>
+          <p class="coverage-area">📍 Coverage: {{ c.coverageArea }}</p>
+          <p class="contact-notes">{{ c.notes }}</p>
+
+          <div class="call-action-box">
+            <a [href]="'tel:' + c.phoneNumber" class="btn-dial-now">
+              📞 Dial {{ c.phoneNumber }}
+            </a>
+            <span class="review-date">Last reviewed: {{ c.reviewDate }}</span>
+          </div>
+        </div>
+      }
+    </div>
+
+    <!-- Offline Resilience Box -->
+    <div class="offline-guidance-card">
+      <h3>📶 Offline Safety Tip for Cameroon Mobile Users</h3>
+      <p>
+        If mobile data (3G/4G) is interrupted in Bamenda, the emergency numbers above remain callable via standard GSM cellular voice across MTN, Orange, and Camtel networks. Save these numbers directly in your physical handset memory.
+      </p>
+    </div>
+  </div>
+</div>

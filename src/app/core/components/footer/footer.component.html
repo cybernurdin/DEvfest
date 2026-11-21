@@ -1,0 +1,65 @@
+<!-- Mobile Persistent Bottom Navigation Bar -->
+<nav class="mobile-bottom-bar" aria-label="Mobile Navigation">
+  <a routerLink="/alerts" routerLinkActive="active" class="bottom-tab">
+    <span class="tab-icon">📢</span>
+    <span class="tab-label">{{ i18n.t('nav.alerts') }}</span>
+  </a>
+  <a routerLink="/map" routerLinkActive="active" class="bottom-tab">
+    <span class="tab-icon">🗺️</span>
+    <span class="tab-label">{{ i18n.t('nav.map') }}</span>
+  </a>
+  <a routerLink="/report" routerLinkActive="active" class="bottom-tab report-tab">
+    <span class="tab-icon">✏️</span>
+    <span class="tab-label">{{ i18n.t('nav.report') }}</span>
+  </a>
+  <a routerLink="/my-alerts" routerLinkActive="active" class="bottom-tab">
+    <span class="tab-icon">🔔</span>
+    <span class="tab-label">{{ i18n.t('nav.my_alerts') }}</span>
+  </a>
+</nav>
+
+<!-- Desktop & Tablet Global Footer -->
+<footer class="site-footer">
+  <div class="footer-container">
+    <div class="footer-columns">
+      <div class="footer-info">
+        <h3 class="footer-heading">SafeCity Bamenda</h3>
+        <p class="footer-desc">
+          An open, independent community safety information platform for Bamenda and the Mezam Division, North-West Cameroon.
+        </p>
+        <p class="legal-badge">
+          Data Handling Principles aligned with Cameroon Law No. 2024/017 of 23 December 2024 on Personal Data Protection.
+        </p>
+      </div>
+
+      <div class="footer-links-group">
+        <h4 class="links-title">Quick Actions</h4>
+        <ul>
+          <li><a routerLink="/report">Report a Local Incident</a></li>
+          <li><a routerLink="/report/status">Track Report by Code</a></li>
+          <li><a routerLink="/emergency-help">Verified Emergency Numbers</a></li>
+          <li><a routerLink="/my-alerts">Manage Area Subscriptions</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-links-group">
+        <h4 class="links-title">Platform & Transparency</h4>
+        <ul>
+          <li><a routerLink="/about">About SafeCity & Principles</a></li>
+          <li><a routerLink="/about" fragment="privacy">Privacy & Anonymous Reporting</a></li>
+          <li><a routerLink="/about" fragment="retention">Data Retention Schedule</a></li>
+          <li><a routerLink="/admin">Moderator Triage Dashboard</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <p class="not-govt-notice">
+        <strong>Important Notice:</strong> SafeCity is operated independently by civic developers and community volunteers. It is not affiliated with the Cameroon Government, Ministry of Territorial Administration, or Alberta Emergency Alert. It does not replace national emergency response systems.
+      </p>
+      <p class="copyright">
+        © 2026 SafeCity Community Project. Built for DEvfest 2026.
+      </p>
+    </div>
+  </div>
+</footer>

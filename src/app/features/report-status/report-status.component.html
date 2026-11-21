@@ -1,0 +1,93 @@
+<div class="report-status-page">
+  <div class="status-container">
+    <header class="status-header">
+      <h1>Track Your Incident Report</h1>
+      <p>Enter the private tracking code generated when you submitted your report.</p>
+    </header>
+
+    <div class="search-card">
+      <div class="input-row">
+        <input
+          type="text"
+          placeholder="e.g. SC-BMD-88231"
+          [ngModel]="trackingInput()"
+          (ngModelChange)="trackingInput.set($event)"
+          (keyup.enter)="search()"
+          class="code-input"
+          aria-label="Enter Tracking Code"
+        />
+        <button type="button" class="btn-search" (click)="search()">
+          Lookup Status 🔍
+        </button>
+      </div>
+    </div>
+
+    @if (searched()) {
+      @if (foundReport()) {
+        <div class="result-card">
+          <div class="result-header">
+            <span class="code-badge">{{ foundReport()!.trackingCode }}</span>
+            <span class="status-pill" [class]="'pill-' + foundReport()!.status">
+              {{ foundReport()!.status | uppercase }}
+            </span>
+          </div>
+
+          <h3>Report Details</h3>
+          <div class="result-grid">
+            <div class="grid-item">
+              <span class="lbl">Category:</span>
+              <strong class="val">{{ i18n.t('category.' + foundReport()!.category) }}</strong>
+            </div>
+            <div class="grid-item">
+              <span class="lbl">Neighborhood Sector:</span>
+              <span class="val">{{ foundReport()!.areaId }}</span>
+            </div>
+            <div class="grid-item">
+              <span class="lbl">Landmark / Location:</span>
+              <span class="val">{{ foundReport()!.roadOrLandmark || 'Not specified' }}</span>
+            </div>
+            <div class="grid-item">
+              <span class="lbl">Submitted At:</span>
+              <span class="val">{{ foundReport()!.createdAt | date:'medium' }}</span>
+            </div>
+            <div class="grid-item full-width">
+              <span class="lbl">Factual Description:</span>
+              <p class="val-desc">{{ foundReport()!.description }}</p>
+            </div>
+          </div>
+
+          <div class="status-timeline">
+            <h4>Verification Life Cycle</h4>
+            <div class="timeline-step" [class.done]="true">
+              <span class="step-num">1</span>
+              <div>
+                <strong>Encrypted Ingestion Passed</strong>
+                <p>Client metadata stripped, unique idempotency key recorded.</p>
+              </div>
+            </div>
+            <div class="timeline-step" [class.done]="foundReport()!.status === 'reviewing' || foundReport()!.status === 'published'">
+              <span class="step-num">2</span>
+              <div>
+                <strong>Duty Moderator Triage</strong>
+                <p>Cross-referencing secondary reports, road accessibility, and safety risk.</p>
+              </div>
+            </div>
+            <div class="timeline-step" [class.done]="foundReport()!.status === 'published'">
+              <span class="step-num">3</span>
+              <div>
+                <strong>Public Safety Advisory Release</strong>
+                <p>If corroborated, published to community feed with safety guidance.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      } @else {
+        <div class="not-found-card">
+          <span class="icon">🔍</span>
+          <h3>Tracking code not found</h3>
+          <p>Please double check that you entered the exact code with the "SC-BMD-" prefix.</p>
+        </div>
+      }
+    }
+  </div>
+</div>

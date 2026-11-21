@@ -1,0 +1,298 @@
+<div class="report-wizard-page">
+  <div class="wizard-container">
+    <div class="wizard-header">
+      <h1 class="page-title">{{ i18n.t('nav.report') }}</h1>
+      <p class="page-subtitle">
+        Help keep fellow Bamenda residents informed. Reports undergo verified moderation prior to public advisory release.
+      </p>
+
+      <!-- Progress Indicator -->
+      @if (currentStep() <= 5) {
+        <div class="progress-bar-track">
+          <div class="progress-bar-fill" [style.width.%]="(currentStep() / 5) * 100"></div>
+        </div>
+        <div class="step-counter">
+          Step {{ currentStep() }} of 5
+        </div>
+      }
+    </div>
+
+    <!-- STEP 1: Emergency Check & Category -->
+    @if (currentStep() === 1) {
+      <div class="step-card">
+        <div class="danger-check-banner">
+          <span class="danger-icon">🚨</span>
+          <div class="danger-text">
+            <strong>Immediate Danger Check:</strong>
+            <p>{{ i18n.t('report.emergency_warning') }}</p>
+            <a routerLink="/emergency-help" class="btn-call-emergency-inline">
+              📞 Direct Emergency Numbers (Police 117 / Fire 118 / SAMU 119)
+            </a>
+          </div>
+        </div>
+
+        <h2 class="step-title">Select Incident Category</h2>
+        <div class="category-options-grid">
+          @for (cat of categoryOptions; track cat.id) {
+            <label class="category-option-card" [class.selected]="category() === cat.id">
+              <input
+                type="radio"
+                name="category"
+                [value]="cat.id"
+                [checked]="category() === cat.id"
+                (change)="category.set(cat.id)"
+              />
+              <span class="cat-icon">{{ cat.icon }}</span>
+              <div class="cat-info">
+                <span class="cat-name">{{ i18n.t(cat.labelKey) }}</span>
+                <span class="cat-desc">{{ cat.desc }}</span>
+              </div>
+            </label>
+          }
+        </div>
+
+        <div class="step-actions">
+          <button type="button" class="btn-primary" (click)="nextStep()">
+            Continue to Location →
+          </button>
+        </div>
+      </div>
+    }
+
+    <!-- STEP 2: Coarse Neighborhood Location -->
+    @if (currentStep() === 2) {
+      <div class="step-card">
+        <h2 class="step-title">{{ i18n.t('report.step2_title') }}</h2>
+        <p class="step-desc">{{ i18n.t('report.area_hint') }}</p>
+
+        <div class="form-group">
+          <label for="citySelect" class="form-label">City / Jurisdiction</label>
+          <input id="citySelect" type="text" value="Bamenda, Mezam Division, Cameroon" disabled class="form-input disabled" />
+        </div>
+
+        <div class="form-group">
+          <label for="areaSelect" class="form-label">Approximate Neighborhood / Sector *</label>
+          <select id="areaSelect" class="form-select" [ngModel]="areaId()" (ngModelChange)="areaId.set($event)">
+            @for (area of incidentService.coarseAreas; track area.id) {
+              <option [value]="area.id">{{ area.name }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="landmarkInput" class="form-label">Road, Junction or Nearby Public Landmark</label>
+          <input
+            id="landmarkInput"
+            type="text"
+            placeholder="e.g. Near Total Filling Station, 50m from Post Office roundabout"
+            class="form-input"
+            [ngModel]="roadOrLandmark()"
+            (ngModelChange)="roadOrLandmark.set($event)"
+          />
+          <span class="input-hint">Do NOT provide private residential house numbers or names of residents.</span>
+        </div>
+
+        <div class="step-actions-split">
+          <button type="button" class="btn-secondary" (click)="prevStep()">← Back</button>
+          <button type="button" class="btn-primary" (click)="nextStep()">Continue to Details →</button>
+        </div>
+      </div>
+    }
+
+    <!-- STEP 3: Factual Observations -->
+    @if (currentStep() === 3) {
+      <div class="step-card">
+        <h2 class="step-title">{{ i18n.t('report.step3_title') }}</h2>
+        <p class="step-desc">{{ i18n.t('report.desc_hint') }}</p>
+
+        <div class="form-group">
+          <label for="descInput" class="form-label">Factual Description of the Hazard *</label>
+          <textarea
+            id="descInput"
+            rows="5"
+            placeholder="What exactly is occurring? (e.g. Fallen utility pole obstructing traffic, heavy black smoke coming from compound, flooded road impassable for small cars)..."
+            class="form-textarea"
+            [ngModel]="description()"
+            (ngModelChange)="description.set($event)"
+            required
+          ></textarea>
+        </div>
+
+        <div class="form-group checkbox-group">
+          <label class="checkbox-label">
+            <input
+              type="checkbox"
+              [checked]="isStillOngoing()"
+              (change)="isStillOngoing.set(!isStillOngoing())"
+            />
+            <span>This situation is actively ongoing at this moment</span>
+          </label>
+        </div>
+
+        <div class="safety-reminder-box">
+          <span class="icon">🛑</span>
+          <p>
+            <strong>Safety Warning:</strong> Do not put yourself in danger to collect information. Never approach fire, collapsed buildings, damaged high-voltage lines, or active unrest.
+          </p>
+        </div>
+
+        <div class="step-actions-split">
+          <button type="button" class="btn-secondary" (click)="prevStep()">← Back</button>
+          <button
+            type="button"
+            class="btn-primary"
+            [disabled]="!description().trim()"
+            (click)="nextStep()">
+            Continue to Evidence →
+          </button>
+        </div>
+      </div>
+    }
+
+    <!-- STEP 4: Evidence & Source Type -->
+    @if (currentStep() === 4) {
+      <div class="step-card">
+        <h2 class="step-title">{{ i18n.t('report.step4_title') }}</h2>
+
+        <div class="form-group">
+          <span class="form-label">How did you learn about this incident? *</span>
+          <div class="radio-stack">
+            <label class="radio-option">
+              <input
+                type="radio"
+                name="sourceType"
+                value="firsthand"
+                [checked]="sourceType() === 'firsthand'"
+                (change)="sourceType.set('firsthand')"
+              />
+              <span class="radio-text">
+                <strong>{{ i18n.t('report.firsthand') }}</strong>
+                <small>I am currently at or near the location and personally saw it</small>
+              </span>
+            </label>
+            <label class="radio-option">
+              <input
+                type="radio"
+                name="sourceType"
+                value="secondhand"
+                [checked]="sourceType() === 'secondhand'"
+                (change)="sourceType.set('secondhand')"
+              />
+              <span class="radio-text">
+                <strong>{{ i18n.t('report.secondhand') }}</strong>
+                <small>A family member, driver, or neighborhood group informed me</small>
+              </span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Evidence Attachment -->
+        <div class="form-group">
+          <span class="form-label">Optional Photo Evidence (Max 3)</span>
+          <div class="upload-dropzone" (click)="simulateUpload()">
+            <span class="upload-icon">📷</span>
+            <p>Tap to attach photo from camera or gallery</p>
+            <span class="metadata-protection-pill">
+              🔒 {{ i18n.t('report.metadata_notice') }}
+            </span>
+          </div>
+          @if (evidenceUploaded()) {
+            <div class="upload-success-chip">
+              ✓ 1 Photo attached (EXIF GPS & camera metadata stripped)
+            </div>
+          }
+        </div>
+
+        <div class="step-actions-split">
+          <button type="button" class="btn-secondary" (click)="prevStep()">← Back</button>
+          <button type="button" class="btn-primary" (click)="nextStep()">Review & Submit →</button>
+        </div>
+      </div>
+    }
+
+    <!-- STEP 5: Final Review & Submission -->
+    @if (currentStep() === 5) {
+      <div class="step-card">
+        <h2 class="step-title">Review & Submit Incident Report</h2>
+        <p class="step-desc">
+          Please confirm your submission details. Submitting this form sends an encrypted record to the duty moderation queue.
+        </p>
+
+        <div class="review-summary-card">
+          <div class="review-row">
+            <span class="review-label">Category:</span>
+            <strong class="review-value">{{ i18n.t('category.' + category()) }}</strong>
+          </div>
+          <div class="review-row">
+            <span class="review-label">Area:</span>
+            <strong class="review-value">{{ areaId() }} (Bamenda)</strong>
+          </div>
+          @if (roadOrLandmark()) {
+            <div class="review-row">
+              <span class="review-label">Landmark:</span>
+              <span class="review-value">{{ roadOrLandmark() }}</span>
+            </div>
+          }
+          <div class="review-row">
+            <span class="review-label">Observation:</span>
+            <span class="review-value">{{ description() }}</span>
+          </div>
+          <div class="review-row">
+            <span class="review-label">Source Type:</span>
+            <span class="review-value">{{ sourceType() === 'firsthand' ? 'Firsthand Observation' : 'Secondhand Information' }}</span>
+          </div>
+        </div>
+
+        <div class="privacy-consent-box">
+          <span class="icon">🛡️</span>
+          <p>
+            By submitting, you attest that the information is provided in good faith for public safety.
+            Your report is processed in accordance with SafeCity's non-affiliation civic guidelines and Cameroon Data Protection Law No. 2024/017.
+          </p>
+        </div>
+
+        <div class="step-actions-split">
+          <button type="button" class="btn-secondary" [disabled]="isSubmitting()" (click)="prevStep()">← Back</button>
+          <button
+            type="button"
+            class="btn-submit-final"
+            [disabled]="isSubmitting()"
+            (click)="submitReport()">
+            @if (isSubmitting()) {
+              <span>Submitting Securely...</span>
+            } @else {
+              <span>{{ i18n.t('report.submit_btn') }} ✓</span>
+            }
+          </button>
+        </div>
+      </div>
+    }
+
+    <!-- STEP 6: Submission Success -->
+    @if (currentStep() === 6) {
+      <div class="success-card">
+        <span class="success-crest">✓</span>
+        <h2 class="success-title">{{ i18n.t('report.tracking_title') }}</h2>
+        <p class="success-message">
+          Your report has been received and entered into the moderation queue. To protect everyone's safety, updates are corroborated prior to public release.
+        </p>
+
+        <div class="tracking-code-box">
+          <span class="code-label">Private Tracking Code:</span>
+          <div class="code-display">
+            <code class="code-text">{{ submittedTrackingCode() }}</code>
+            <button type="button" class="btn-copy-code" (click)="copyTrackingCode()">
+              📋 Copy Code
+            </button>
+          </div>
+          <p class="code-help">Keep this code to check verification progress anytime.</p>
+        </div>
+
+        <div class="success-actions">
+          <a routerLink="/alerts" class="btn-primary">Return to Safety Alerts</a>
+          <a [routerLink]="['/report/status']" class="btn-secondary">Track Report Status</a>
+        </div>
+      </div>
+    }
+  </div>
+</div>

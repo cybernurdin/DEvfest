@@ -1,0 +1,156 @@
+.about-page {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 32px 16px 64px;
+}
+
+.about-header {
+  text-align: center;
+  margin-bottom: 28px;
+
+  .badge-org {
+    display: inline-block;
+    background-color: #e0f2fe;
+    color: #0369a1;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 4px 12px;
+    border-radius: 20px;
+    margin-bottom: 12px;
+  }
+
+  h1 {
+    font-size: 2rem;
+    font-weight: 800;
+    color: #0f172a;
+    letter-spacing: -0.02em;
+    margin: 0 0 12px;
+  }
+
+  .lead-text {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: #475569;
+    max-width: 680px;
+    margin: 0 auto;
+  }
+}
+
+.disclaimer-callout {
+  background-color: #fffbeb;
+  border: 1px solid #fef3c7;
+  border-left: 5px solid #d97706;
+  border-radius: 6px;
+  padding: 20px;
+  margin-bottom: 36px;
+
+  h3 {
+    margin: 0 0 6px;
+    font-size: 1rem;
+    color: #92400e;
+  }
+
+  p {
+    margin: 0;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    color: #78350f;
+  }
+}
+
+.content-section {
+  margin-bottom: 40px;
+
+  h2 {
+    font-size: 1.35rem;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 0 0 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #e2e8f0;
+  }
+
+  p {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: #334155;
+  }
+}
+
+.principles-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-top: 16px;
+
+  @media (max-width: 640px) {
+    grid-template-columns: 1fr;
+  }
+
+  .principle-card {
+    background-color: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 20px;
+
+    .icon {
+      font-size: 1.75rem;
+      display: block;
+      margin-bottom: 10px;
+    }
+
+    h4 {
+      margin: 0 0 6px;
+      font-size: 1rem;
+      color: #0f172a;
+    }
+
+    p {
+      margin: 0;
+      font-size: 0.85rem;
+      line-height: 1.45;
+      color: #64748b;
+    }
+  }
+}
+
+.legal-points {
+  padding-left: 20px;
+  margin: 16px 0;
+
+  li {
+    margin-bottom: 12px;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    color: #334155;
+  }
+}
+
+.retention-table-card {
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  overflow-x: auto;
+
+  .retention-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+
+    th, td {
+      padding: 12px 16px;
+      text-align: left;
+      border-bottom: 1px solid #f1f5f9;
+    }
+
+    th {
+      background-color: #f8fafc;
+      font-weight: 700;
+      color: #334155;
+    }
+
+    td {
+      color: #475569;
+    }
+  }
+}

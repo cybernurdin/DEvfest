@@ -1,0 +1,266 @@
+<div class="admin-dashboard-page">
+  <div class="dashboard-container">
+    <header class="dashboard-header">
+      <div class="header-left">
+        <span class="staff-badge">🛡️ Authenticated Staff Console</span>
+        <h1>{{ i18n.t('admin.triage_title') }}</h1>
+      </div>
+
+      <!-- Quick Metrics Strip -->
+      <div class="metrics-strip">
+        <div class="metric-card">
+          <span class="m-val">{{ incidentService.pendingReports().length }}</span>
+          <span class="m-lbl">In Triage Queue</span>
+        </div>
+        <div class="metric-card">
+          <span class="m-val">{{ incidentService.incidents().length }}</span>
+          <span class="m-lbl">Public Notices</span>
+        </div>
+        <div class="metric-card">
+          <span class="m-val">{{ incidentService.auditLogs().length }}</span>
+          <span class="m-lbl">Audit Entries</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Sub-navigation tabs -->
+    <div class="admin-tabs" role="tablist">
+      <button
+        type="button"
+        class="tab-btn"
+        [class.active]="activeTab() === 'triage'"
+        (click)="activeTab.set('triage')">
+        📥 Incoming Triage ({{ incidentService.pendingReports().length }})
+      </button>
+      <button
+        type="button"
+        class="tab-btn"
+        [class.active]="activeTab() === 'incidents'"
+        (click)="activeTab.set('incidents')">
+        📢 Active Public Notices ({{ incidentService.incidents().length }})
+      </button>
+      <button
+        type="button"
+        class="tab-btn"
+        [class.active]="activeTab() === 'audit'"
+        (click)="activeTab.set('audit')">
+        📜 Audited Log Trail
+      </button>
+    </div>
+
+    <!-- TAB 1: TRIAGE WORKSPACE -->
+    @if (activeTab() === 'triage') {
+      <div class="triage-layout">
+        <div class="reports-list-panel">
+          <h3>Pending Submissions</h3>
+          @if (incidentService.pendingReports().length === 0) {
+            <p class="empty-hint">Queue clear. No pending submissions.</p>
+          }
+          @for (rep of incidentService.pendingReports(); track rep.id) {
+            <div
+              class="triage-item"
+              [class.active]="selectedReport()?.id === rep.id"
+              (click)="selectReport(rep)">
+              <div class="item-top">
+                <span class="tracking-pill">{{ rep.trackingCode }}</span>
+                <span class="cat-pill">{{ rep.category }}</span>
+              </div>
+              <p class="item-desc">{{ rep.description }}</p>
+              <div class="item-meta">
+                <span>📍 {{ rep.areaId }}</span>
+                <span>🕒 {{ rep.createdAt | date:'shortTime' }}</span>
+              </div>
+            </div>
+          }
+        </div>
+
+        <!-- Side-by-side Sanitization & Elevation Panel -->
+        <div class="workspace-panel">
+          @if (selectedReport()) {
+            <div class="workspace-card">
+              <div class="card-header">
+                <h3>Corroborate & Elevate to Public Advisory</h3>
+                <span class="badge-raw">RAW REPORT: {{ selectedReport()!.trackingCode }}</span>
+              </div>
+
+              <!-- Raw Details Reference -->
+              <div class="raw-reference-box">
+                <span class="lbl">Raw Witness Text:</span>
+                <p>{{ selectedReport()!.description }}</p>
+                <div class="raw-meta">
+                  <span>Landmark: <strong>{{ selectedReport()!.roadOrLandmark }}</strong></span> •
+                  <span>Witness Type: <strong>{{ selectedReport()!.sourceType }}</strong></span>
+                </div>
+              </div>
+
+              <!-- Sanitized Public Form -->
+              <div class="publish-form">
+                <div class="form-group">
+                  <label for="headlineInput">Public Headline *</label>
+                  <input
+                    id="headlineInput"
+                    type="text"
+                    class="form-input"
+                    [ngModel]="publishHeadline()"
+                    (ngModelChange)="publishHeadline.set($event)"
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label for="summaryInput">Sanitized Public Summary *</label>
+                  <textarea
+                    id="summaryInput"
+                    rows="3"
+                    class="form-textarea"
+                    [ngModel]="publishSummary()"
+                    (ngModelChange)="publishSummary.set($event)"
+                  ></textarea>
+                  <span class="input-hint">Remove any individual names, vehicle numbers, or exact residential addresses.</span>
+                </div>
+
+                <div class="form-group">
+                  <label for="severitySelectAdmin">Severity Level</label>
+                  <select
+                    id="severitySelectAdmin"
+                    class="form-select"
+                    [ngModel]="publishSeverity()"
+                    (ngModelChange)="publishSeverity.set($event)">
+                    <option value="information">Information</option>
+                    <option value="caution">Caution Needed</option>
+                    <option value="urgent">Urgent</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label for="adviceInput">Public Safety Advice *</label>
+                  <input
+                    id="adviceInput"
+                    type="text"
+                    class="form-input"
+                    [ngModel]="publishAdvice()"
+                    (ngModelChange)="publishAdvice.set($event)"
+                  />
+                </div>
+
+                <div class="actions-row">
+                  <button type="button" class="btn-cancel" (click)="selectedReport.set(null)">Cancel</button>
+                  <button type="button" class="btn-publish" (click)="confirmPublish()">
+                    ✓ Approve, Corroborate & Publish
+                  </button>
+                </div>
+              </div>
+            </div>
+          } @else {
+            <div class="empty-workspace">
+              <span class="icon">👈</span>
+              <h4>Select a pending submission to review</h4>
+              <p>Compare raw witness observations against verified criteria and sanitize for public protection.</p>
+            </div>
+          }
+        </div>
+      </div>
+    }
+
+    <!-- TAB 2: ACTIVE INCIDENTS MANAGEMENT -->
+    @if (activeTab() === 'incidents') {
+      <div class="incidents-mgmt-panel">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>ID & Revision</th>
+              <th>Category</th>
+              <th>Area</th>
+              <th>Headline</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (inc of incidentService.incidents(); track inc.id) {
+              <tr>
+                <td><strong>{{ inc.id }}</strong> (Rev #{{ inc.revision }})</td>
+                <td>{{ inc.category }}</td>
+                <td>{{ inc.areaName }}</td>
+                <td>{{ inc.headline }}</td>
+                <td>
+                  <span class="status-badge" [class]="'badge-' + inc.verificationStatus">
+                    {{ inc.verificationStatus }}
+                  </span>
+                </td>
+                <td>
+                  @if (inc.verificationStatus !== 'retracted') {
+                    <button
+                      type="button"
+                      class="btn-retract-action"
+                      (click)="retractIncidentId.set(inc.id)">
+                      Retract Notice
+                    </button>
+                  } @else {
+                    <span class="retracted-text">Retracted</span>
+                  }
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+
+    <!-- TAB 3: AUDITED LOG TRAIL -->
+    @if (activeTab() === 'audit') {
+      <div class="audit-panel">
+        <div class="audit-header">
+          <h3>Immutable Audit Log Trail</h3>
+          <p>Every administrative ingestion, verification, advice modification, and retraction is recorded.</p>
+        </div>
+
+        <div class="audit-log-items">
+          @for (log of incidentService.auditLogs(); track log.id) {
+            <div class="log-item">
+              <div class="log-top">
+                <span class="action-tag">{{ log.action }}</span>
+                <span class="actor-tag">Actor: {{ log.actor }}</span>
+                <span class="log-time">{{ log.timestamp | date:'medium' }}</span>
+              </div>
+              <p class="log-details">{{ log.details }}</p>
+              <div class="log-reason">Reason Code: <code>{{ log.reasonCode }}</code></div>
+            </div>
+          }
+        </div>
+      </div>
+    }
+
+    <!-- Retract Confirmation Modal -->
+    @if (retractIncidentId()) {
+      <div class="modal-backdrop" (click)="retractIncidentId.set(null)">
+        <div class="modal-content" (click)="$event.stopPropagation()">
+          <div class="modal-header">
+            <h3>Confirm Incident Retraction</h3>
+            <button type="button" class="close-btn" (click)="retractIncidentId.set(null)">✕</button>
+          </div>
+          <div class="modal-body">
+            <p>Retracting a public safety notice will update its status, stop notification broadcasts, and append a formal retraction statement to the public notice.</p>
+            <label for="retractReasonInput" class="form-label">Retraction Reason *</label>
+            <input
+              id="retractReasonInput"
+              type="text"
+              class="form-input"
+              placeholder="e.g. Investigation confirmed false alarm; situation resolved before hazard manifested..."
+              [(ngModel)]="retractReason"
+            />
+          </div>
+          <div class="modal-actions">
+            <button type="button" class="btn-cancel" (click)="retractIncidentId.set(null)">Cancel</button>
+            <button
+              type="button"
+              class="btn-danger-confirm"
+              [disabled]="!retractReason().trim()"
+              (click)="confirmRetract()">
+              Confirm Retraction
+            </button>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+</div>

@@ -1,0 +1,280 @@
+<div class="alerts-page">
+  <!-- Toast alert -->
+  @if (shareToast()) {
+    <div class="toast-notification" role="status">
+      {{ shareToast() }}
+    </div>
+  }
+
+  <!-- Header Section with City context & Emergency guidance -->
+  <section class="city-hero-strip">
+    <div class="hero-left">
+      <div class="city-badge">
+        <span class="pulse-dot"></span>
+        <span class="city-label">{{ i18n.t('city.selector') }}</span>
+      </div>
+      <h1 class="hero-title">{{ i18n.t('nav.alerts') }}</h1>
+      <p class="hero-meta">
+        Live active civic safety notices & verified situation updates.
+        <span class="time-stamp">Updated in real-time (UTC+1 West Africa Time)</span>
+      </p>
+    </div>
+
+    <div class="hero-right">
+      <a routerLink="/report" class="btn-report-action">
+        <span class="icon">✏️</span>
+        <span>{{ i18n.t('action.report_now') }}</span>
+      </a>
+      <a routerLink="/emergency-help" class="btn-emergency-action">
+        <span class="icon">🚨</span>
+        <span>{{ i18n.t('action.emergency_help') }}</span>
+      </a>
+    </div>
+  </section>
+
+  <!-- Filter & View Controls -->
+  <section class="controls-card">
+    <div class="search-and-view">
+      <div class="search-input-box">
+        <span class="search-icon" aria-hidden="true">🔍</span>
+        <input
+          type="text"
+          [placeholder]="i18n.t('action.search')"
+          [ngModel]="incidentService.searchQuery()"
+          (ngModelChange)="incidentService.searchQuery.set($event)"
+          aria-label="Search safety notices by keyword or area"
+        />
+        @if (incidentService.searchQuery()) {
+          <button
+            type="button"
+            class="clear-search-btn"
+            (click)="incidentService.searchQuery.set('')"
+            aria-label="Clear search">
+            ✕
+          </button>
+        }
+      </div>
+
+      <div class="view-toggle" role="group" aria-label="Display View Toggle">
+        <button
+          type="button"
+          class="toggle-btn"
+          [class.active]="viewMode() === 'list'"
+          (click)="setView('list')">
+          📋 {{ i18n.t('action.view_list') }}
+        </button>
+        <button
+          type="button"
+          class="toggle-btn"
+          [class.active]="viewMode() === 'map'"
+          (click)="setView('map')">
+          🗺️ {{ i18n.t('action.view_map') }}
+        </button>
+      </div>
+    </div>
+
+    <!-- Category Chips -->
+    <div class="category-chips-scroll" role="tablist" aria-label="Filter by Category">
+      @for (cat of categories; track cat.id) {
+        <button
+          type="button"
+          class="category-chip"
+          [class.active]="incidentService.activeCategory() === cat.id"
+          (click)="setCategory(cat.id)"
+          role="tab"
+          [attr.aria-selected]="incidentService.activeCategory() === cat.id">
+          {{ i18n.t(cat.labelKey) }}
+        </button>
+      }
+    </div>
+
+    <!-- Severity Filter Bar -->
+    <div class="severity-filter-bar">
+      <span class="filter-label">Severity Level:</span>
+      @for (sev of severities; track sev.id) {
+        <button
+          type="button"
+          class="severity-btn"
+          [class.active]="incidentService.activeSeverity() === sev.id"
+          [ngClass]="sev.id !== 'all' ? getSeverityClass(sev.id) : ''"
+          (click)="setSeverity(sev.id)">
+          {{ sev.id === 'all' ? 'All Severities' : i18n.t(sev.labelKey) }}
+        </button>
+      }
+    </div>
+  </section>
+
+  <!-- LIST VIEW MODE -->
+  @if (viewMode() === 'list') {
+    <section class="incidents-feed" aria-live="polite">
+      @if (incidentService.filteredIncidents().length === 0) {
+        <div class="empty-state-card">
+          <span class="empty-icon">🛡️</span>
+          <h3>No active safety incidents found</h3>
+          <p>There are no reported notices matching your selected category and area filters in Bamenda right now.</p>
+          <button type="button" class="btn-secondary" (click)="setCategory('all'); setSeverity('all'); incidentService.searchQuery.set('')">
+            Reset All Filters
+          </button>
+        </div>
+      }
+
+      @for (inc of incidentService.filteredIncidents(); track inc.id) {
+        <article class="incident-card" [ngClass]="getSeverityClass(inc.severity)">
+          <div class="card-header">
+            <div class="badge-cluster">
+              <span class="badge-severity" [ngClass]="getSeverityClass(inc.severity)">
+                {{ inc.severity | uppercase }}
+              </span>
+              <span class="badge-verification" [ngClass]="getVerificationClass(inc.verificationStatus)">
+                {{ i18n.t('status.' + inc.verificationStatus) }}
+              </span>
+              <span class="badge-category">
+                {{ i18n.t('category.' + inc.category) }}
+              </span>
+            </div>
+            <div class="card-timestamps">
+              <span class="timestamp-label">{{ i18n.t('detail.last_updated') }}</span>
+              <time [attr.datetime]="inc.updatedAt">{{ inc.updatedAt | date:'short' }}</time>
+            </div>
+          </div>
+
+          <h2 class="incident-headline">
+            <a [routerLink]="['/alerts', inc.id]">{{ inc.headline }}</a>
+          </h2>
+
+          <div class="incident-area-tag">
+            <span class="location-icon">📍</span>
+            <strong>{{ inc.areaName }}</strong>
+            <span class="area-coarse-note">(Coarse neighborhood perimeter)</span>
+          </div>
+
+          <p class="incident-summary">
+            {{ inc.safeSummary }}
+          </p>
+
+          <!-- Actionable Guidance Box -->
+          <div class="advice-callout">
+            <span class="advice-icon">💡</span>
+            <div class="advice-body">
+              <strong>{{ i18n.t('detail.safety_advice') }}:</strong>
+              <span>{{ inc.safetyAdvice }}</span>
+            </div>
+          </div>
+
+          <!-- Card Actions -->
+          <div class="card-footer">
+            <a [routerLink]="['/alerts', inc.id]" class="btn-read-more">
+              Read Verified Details & History →
+            </a>
+            <button type="button" class="btn-share" (click)="shareIncident(inc)" aria-label="Share this notice">
+              🔗 {{ i18n.t('action.share') }}
+            </button>
+          </div>
+        </article>
+      }
+    </section>
+  }
+
+  <!-- MAP VIEW MODE -->
+  @if (viewMode() === 'map') {
+    <section class="map-view-section">
+      <div class="map-container-card">
+        <div class="map-header">
+          <div class="map-legend">
+            <span class="legend-item"><span class="color-dot dot-urgent"></span> Urgent</span>
+            <span class="legend-item"><span class="color-dot dot-caution"></span> Caution</span>
+            <span class="legend-item"><span class="color-dot dot-info"></span> Informational</span>
+            <span class="legend-item"><span class="color-dot dot-safe"></span> Sector Monitored</span>
+          </div>
+          <span class="map-disclaimer">
+            Coarse sector representation to protect civilian privacy. No exact witness pins.
+          </span>
+        </div>
+
+        <!-- Interactive SVG Sector Map for Bamenda -->
+        <div class="svg-map-wrapper">
+          <svg viewBox="0 0 800 500" class="bamenda-svg-map" aria-label="Bamenda Coarse Sector Map">
+            <!-- Background grid -->
+            <defs>
+              <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+                <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#e2e8f0" stroke-width="0.5"/>
+              </pattern>
+            </defs>
+            <rect width="800" height="500" fill="url(#grid)" />
+
+            <!-- City Outline -->
+            <rect x="50" y="40" width="700" height="420" rx="20" fill="#f8fafc" stroke="#94a3b8" stroke-width="2" />
+            <text x="70" y="75" font-size="16" font-weight="bold" fill="#334155">BAMENDA MUNICIPALITY (MEZAM DIVISION)</text>
+
+            <!-- Coarse Sectors (Sectors mapped as circles/polygons) -->
+            <!-- Up Station -->
+            <g class="sector-node" (click)="selectAreaOnMap('area-upstation')" [class.selected]="selectedMapAreaId() === 'area-upstation'">
+              <circle cx="220" cy="160" r="60" fill="#e0f2fe" stroke="#0284c7" stroke-width="2" />
+              <text x="220" y="160" text-anchor="middle" font-size="13" font-weight="bold" fill="#0369a1">Up Station</text>
+              <circle cx="220" cy="180" r="6" fill="#f59e0b" />
+            </g>
+
+            <!-- Commercial Avenue -->
+            <g class="sector-node" (click)="selectAreaOnMap('area-commercial')" [class.selected]="selectedMapAreaId() === 'area-commercial'">
+              <circle cx="360" cy="220" r="70" fill="#fef3c7" stroke="#d97706" stroke-width="2" />
+              <text x="360" y="215" text-anchor="middle" font-size="14" font-weight="bold" fill="#92400e">Commercial Ave</text>
+              <text x="360" y="235" text-anchor="middle" font-size="10" fill="#b45309">⚠️ 1 Active Caution</text>
+            </g>
+
+            <!-- Station Hill -->
+            <g class="sector-node" (click)="selectAreaOnMap('area-stationhill')" [class.selected]="selectedMapAreaId() === 'area-stationhill'">
+              <circle cx="280" cy="290" r="55" fill="#fef3c7" stroke="#d97706" stroke-width="2" />
+              <text x="280" y="290" text-anchor="middle" font-size="12" font-weight="bold" fill="#92400e">Station Hill</text>
+            </g>
+
+            <!-- Food Market -->
+            <g class="sector-node" (click)="selectAreaOnMap('area-foodmarket')" [class.selected]="selectedMapAreaId() === 'area-foodmarket'">
+              <circle cx="480" cy="200" r="65" fill="#fee2e2" stroke="#dc2626" stroke-width="2" />
+              <text x="480" y="195" text-anchor="middle" font-size="13" font-weight="bold" fill="#991b1b">Food Market</text>
+              <text x="480" y="215" text-anchor="middle" font-size="10" fill="#dc2626">🚨 Fire Cleared</text>
+            </g>
+
+            <!-- Nkwen -->
+            <g class="sector-node" (click)="selectAreaOnMap('area-nkwen')" [class.selected]="selectedMapAreaId() === 'area-nkwen'">
+              <circle cx="580" cy="140" r="75" fill="#e0e7ff" stroke="#4338ca" stroke-width="2" />
+              <text x="580" y="135" text-anchor="middle" font-size="14" font-weight="bold" fill="#3730a3">Nkwen Sector</text>
+              <text x="580" y="155" text-anchor="middle" font-size="10" fill="#4f46e5">🌧️ Weather Notice</text>
+            </g>
+
+            <!-- Cow Street Junction -->
+            <g class="sector-node" (click)="selectAreaOnMap('area-cowstreet')" [class.selected]="selectedMapAreaId() === 'area-cowstreet'">
+              <circle cx="440" cy="330" r="55" fill="#f1f5f9" stroke="#64748b" stroke-width="2" />
+              <text x="440" y="330" text-anchor="middle" font-size="12" font-weight="bold" fill="#334155">Cow Street</text>
+            </g>
+
+            <!-- Mile 4 -->
+            <g class="sector-node" (click)="selectAreaOnMap('area-mile4')" [class.selected]="selectedMapAreaId() === 'area-mile4'">
+              <circle cx="670" cy="240" r="50" fill="#f1f5f9" stroke="#64748b" stroke-width="2" />
+              <text x="670" y="240" text-anchor="middle" font-size="12" font-weight="bold" fill="#334155">Mile 4</text>
+            </g>
+          </svg>
+        </div>
+
+        <!-- Selected Area Details Overlay -->
+        @if (selectedMapIncident()) {
+          <div class="map-incident-preview">
+            <div class="preview-header">
+              <span class="preview-badge" [ngClass]="getSeverityClass(selectedMapIncident()!.severity)">
+                {{ selectedMapIncident()!.severity | uppercase }}
+              </span>
+              <span class="preview-area">📍 {{ selectedMapIncident()!.areaName }}</span>
+              <button type="button" class="close-preview-btn" (click)="selectedMapIncident.set(null)">✕</button>
+            </div>
+            <h4>{{ selectedMapIncident()!.headline }}</h4>
+            <p>{{ selectedMapIncident()!.safeSummary }}</p>
+            <div class="preview-actions">
+              <a [routerLink]="['/alerts', selectedMapIncident()!.id]" class="btn-read-more">
+                View Full Notice & Guidance →
+              </a>
+            </div>
+          </div>
+        }
+      </div>
+    </section>
+  }
+</div>

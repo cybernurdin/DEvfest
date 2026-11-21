@@ -1,0 +1,62 @@
+<header class="site-header">
+  <!-- Top Civic Safety Banner -->
+  <div class="disclaimer-banner" role="alert">
+    <div class="banner-content">
+      <span class="warning-icon" aria-hidden="true">⚠️</span>
+      <p class="disclaimer-text">
+        <strong>{{ i18n.t('app.disclaimer') }}</strong>
+      </p>
+      <a routerLink="/emergency-help" class="quick-emergency-btn">
+        📞 {{ i18n.t('action.emergency_help') }}
+      </a>
+    </div>
+  </div>
+
+  <!-- Main Navbar -->
+  <div class="navbar-wrapper">
+    <div class="navbar-container">
+      <a routerLink="/" class="brand-block">
+        <div class="brand-crest" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            <path d="M12 8v4M12 16h.01"/>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <span class="brand-title">SafeCity</span>
+          <span class="brand-subtitle">Bamenda Safety Alerts</span>
+        </div>
+      </a>
+
+      <!-- Primary Desktop Navigation -->
+      <nav class="desktop-nav" aria-label="Main Navigation">
+        <a routerLink="/alerts" routerLinkActive="active" class="nav-link">
+          {{ i18n.t('nav.alerts') }}
+        </a>
+        <a routerLink="/map" routerLinkActive="active" class="nav-link">
+          {{ i18n.t('nav.map') }}
+        </a>
+        <a routerLink="/report" routerLinkActive="active" class="nav-link report-cta">
+          ✏️ {{ i18n.t('nav.report') }}
+        </a>
+        <a routerLink="/my-alerts" routerLinkActive="active" class="nav-link">
+          🔔 {{ i18n.t('nav.my_alerts') }}
+        </a>
+        <a routerLink="/admin" routerLinkActive="active" class="nav-link staff-link">
+          🛡️ {{ i18n.t('nav.admin') }}
+        </a>
+      </nav>
+
+      <!-- Language Switcher & Controls -->
+      <div class="header-actions">
+        <button
+          type="button"
+          class="lang-toggle-btn"
+          (click)="i18n.toggleLanguage()"
+          [attr.aria-label]="'Switch to ' + (i18n.currentLang() === 'en' ? 'French' : 'English')">
+          🌐 {{ i18n.currentLang() === 'en' ? 'FR' : 'EN' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</header>

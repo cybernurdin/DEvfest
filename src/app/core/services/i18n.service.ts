@@ -1,0 +1,160 @@
+import { Injectable, signal } from '@angular/core';
+
+export type Language = 'en' | 'fr';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class I18nService {
+  currentLang = signal<Language>('en');
+
+  private translations: Record<Language, Record<string, string>> = {
+    en: {
+      'app.title': 'SafeCity Bamenda',
+      'app.tagline': 'Community Safety & Incident Awareness Platform',
+      'app.disclaimer': 'Community safety notice — Not an official emergency service. This platform does not dispatch rescue or police services. In immediate danger, call local emergency services directly.',
+      'nav.alerts': 'Safety Alerts',
+      'nav.map': 'Incident Map',
+      'nav.report': 'Report an Incident',
+      'nav.my_alerts': 'My Alerts',
+      'nav.emergency': 'Emergency Directory',
+      'nav.about': 'About & Privacy',
+      'nav.admin': 'Staff Ops',
+      'city.selector': 'Location: Bamenda, Cameroon',
+      'action.report_now': 'Report an Incident',
+      'action.emergency_help': 'Emergency Help (1-Tap Call)',
+      'action.filter': 'Filter Alerts',
+      'action.search': 'Search safety notices...',
+      'action.view_list': 'List View',
+      'action.view_map': 'Map View',
+      'action.share': 'Share Notice',
+      'action.flag_inaccuracy': 'Report Inaccuracy',
+      'action.back_to_alerts': 'Back to Alerts',
+      'action.subscribe': 'Save Subscription Preferences',
+      'action.test_notification': 'Simulate Push Alert',
+      'category.all': 'All Categories',
+      'category.public-safety': 'Public Safety',
+      'category.mobility': 'Mobility & Roads',
+      'category.security-sensitive': 'Security-Sensitive',
+      'category.health-utility': 'Health & Utilities',
+      'category.weather': 'Weather Hazards',
+      'severity.information': 'Informational',
+      'severity.caution': 'Caution Needed',
+      'severity.urgent': 'Urgent Alert',
+      'status.submitted': 'Report Submitted',
+      'status.reviewing': 'Under Review',
+      'status.community-reported': 'Community Reported (Unverified)',
+      'status.corroborated': 'Corroborated by Independent Sources',
+      'status.official-source': 'Official Agency Sourced',
+      'status.disputed': 'Disputed / Fact-Checking',
+      'status.retracted': 'Retracted / Withdrawn',
+      'detail.safety_advice': 'Public Safety Advice',
+      'detail.known_facts': 'Corroborated Facts',
+      'detail.uncertainties': 'What Is Still Unconfirmed',
+      'detail.updates_timeline': 'Revision History & Updates',
+      'detail.observed': 'Observed:',
+      'detail.last_updated': 'Last Verified:',
+      'detail.area': 'General Area:',
+      'report.step1_title': 'Step 1: Emergency & Category',
+      'report.emergency_warning': 'Are lives in danger right now? If yes, please evacuate to safety and contact emergency authorities immediately.',
+      'report.step2_title': 'Step 2: Area & Landmark',
+      'report.area_hint': 'Choose the general neighborhood. Precise GPS coordinates are kept private and never exposed.',
+      'report.step3_title': 'Step 3: What Did You Observe?',
+      'report.desc_hint': 'Describe what you saw factually (smoke, blocked street, flooded culvert). Do not investigate or report armed individuals.',
+      'report.step4_title': 'Step 4: Evidence & Source Type',
+      'report.firsthand': 'I personally witnessed this firsthand',
+      'report.secondhand': 'I heard this from neighbors/secondhand',
+      'report.metadata_notice': 'Any uploaded image will have EXIF location metadata stripped to protect witness safety.',
+      'report.step5_title': 'Step 5: Review & Submit',
+      'report.submit_btn': 'Submit Incident Report',
+      'report.tracking_title': 'Report Submitted Safely',
+      'report.tracking_desc': 'Your private tracking code is below. Save it to check review status.',
+      'admin.triage_title': 'Operations Triage & Verification Queue',
+      'admin.raw_vs_projection': 'Raw Submissions vs Sanitized Public Projection',
+      'admin.action_corroborate': 'Corroborate & Publish',
+      'admin.action_retract': 'Retract Notice',
+      'admin.audit_title': 'Audited Staff Activity Log',
+    },
+    fr: {
+      'app.title': 'SafeCity Bamenda',
+      'app.tagline': 'Plateforme d’alerte et de sécurité communautaire',
+      'app.disclaimer': 'Information de sécurité communautaire — Ce service n’est pas un organisme public d’urgence. Il ne dépêche ni pompiers ni police. En cas de péril imminent, appelez directement les services d’urgence.',
+      'nav.alerts': 'Alertes de sécurité',
+      'nav.map': 'Carte des incidents',
+      'nav.report': 'Signaler un incident',
+      'nav.my_alerts': 'Mes alertes',
+      'nav.emergency': 'Annuaire d’urgence',
+      'nav.about': 'À propos & Confidentialité',
+      'nav.admin': 'Gestion & Modération',
+      'city.selector': 'Localité : Bamenda, Cameroun',
+      'action.report_now': 'Signaler un incident',
+      'action.emergency_help': 'Numéros d’urgence (Appel direct)',
+      'action.filter': 'Filtrer les alertes',
+      'action.search': 'Rechercher un avis de sécurité...',
+      'action.view_list': 'Vue Liste',
+      'action.view_map': 'Vue Carte',
+      'action.share': 'Partager l’avis',
+      'action.flag_inaccuracy': 'Signaler une inexactitude',
+      'action.back_to_alerts': 'Retour aux alertes',
+      'action.subscribe': 'Enregistrer mes préférences',
+      'action.test_notification': 'Simuler une alerte push',
+      'category.all': 'Toutes les catégories',
+      'category.public-safety': 'Sécurité publique',
+      'category.mobility': 'Mobilité & Voirie',
+      'category.security-sensitive': 'Sécurité sensible',
+      'category.health-utility': 'Santé & Réseaux',
+      'category.weather': 'Aléas météo',
+      'severity.information': 'Information',
+      'severity.caution': 'Vigilance requise',
+      'severity.urgent': 'Alerte urgente',
+      'status.submitted': 'Rapport soumis',
+      'status.reviewing': 'En cours d’examen',
+      'status.community-reported': 'Signalement citoyen (Non vérifié)',
+      'status.corroborated': 'Corroboré par sources indépendantes',
+      'status.official-source': 'Source officielle confirmée',
+      'status.disputed': 'Contesté / Vérification en cours',
+      'status.retracted': 'Avis retiré / Annulé',
+      'detail.safety_advice': 'Consignes de sécurité publique',
+      'detail.known_facts': 'Faits établis et vérifiés',
+      'detail.uncertainties': 'Éléments non confirmés',
+      'detail.updates_timeline': 'Historique des révisions et mises à jour',
+      'detail.observed': 'Observé le :',
+      'detail.last_updated': 'Dernière vérification :',
+      'detail.area': 'Secteur général :',
+      'report.step1_title': 'Étape 1 : Urgence et Catégorie',
+      'report.emergency_warning': 'Des vies sont-elles en danger immédiat ? Si oui, évacuez vers un lieu sûr et contactez immédiatement les secours locaux.',
+      'report.step2_title': 'Étape 2 : Quartier et Repère',
+      'report.area_hint': 'Sélectionnez le quartier approximatif. Les coordonnées GPS précises ne sont jamais divulguées au public.',
+      'report.step3_title': 'Étape 3 : Qu’avez-vous observé ?',
+      'report.desc_hint': 'Décrivez factuellement ce que vous voyez (fumée, voie bloquée, caniveau débordé). Ne vous approchez pas du danger.',
+      'report.step4_title': 'Étape 4 : Preuves et Source',
+      'report.firsthand': 'J’ai été témoin direct des faits',
+      'report.secondhand': 'Informations rapportées par des tiers',
+      'report.metadata_notice': 'Toute photo envoyée voit ses métadonnées EXIF/GPS purgées pour protéger l’anonymat du témoin.',
+      'report.step5_title': 'Étape 5 : Révision et Envoi',
+      'report.submit_btn': 'Envoyer le signalement',
+      'report.tracking_title': 'Signalement enregistré en toute sécurité',
+      'report.tracking_desc': 'Voici votre code de suivi privé. Conservez-le pour vérifier l’avancement.',
+      'admin.triage_title': 'File de modération et de vérification opérationnelle',
+      'admin.raw_vs_projection': 'Rapports bruts vs Projection publique sécurisée',
+      'admin.action_corroborate': 'Corroborer & Publier',
+      'admin.action_retract': 'Retirer l’avis',
+      'admin.audit_title': 'Journal d’audit des actions de modération',
+    }
+  };
+
+  t(key: string): string {
+    return this.translations[this.currentLang()][key] || key;
+  }
+
+  setLanguage(lang: Language): void {
+    this.currentLang.set(lang);
+    if (typeof localStorage !== 'undefined') {
+      localStorage.setItem('safecity_lang', lang);
+    }
+  }
+
+  toggleLanguage(): void {
+    this.setLanguage(this.currentLang() === 'en' ? 'fr' : 'en');
+  }
+}
