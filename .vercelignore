@@ -1,0 +1,8 @@
+mobile/
+.git/
+.vscode/
+.gemini/
+__screenshots__/
+coverage/
+specification.md
+Community_Safety_Alerts_Full_Build_Specification.docx
